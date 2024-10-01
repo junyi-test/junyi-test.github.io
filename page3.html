@@ -31,23 +31,25 @@
         font-size: 1.1em;
         color: #333;
       }
+      .pagination {
+        text-align: center;
+        margin-top: 2em;
+      }
+      .pagination a {
+        margin: 0 0.5em;
+        text-decoration: none;
+        color: #333;
+      }
+      .pagination strong {
+        margin: 0 0.5em;
+        color: #000;
+      }
     </style>
   </head>
   <body>
-    <div style="text-align: center; padding: 1em">
-      <a href="index.html">Page 1</a>
-      &nbsp;&bull;&nbsp;
-      <a href="page2.html">Page 2</a>
-      &nbsp;&bull;&nbsp;
-      <strong>Page 3</strong>
-    </div>
+    <div id="wrapper" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 2em;"></div>
 
-    <p style="text-align: center; padding: 1em">
-      You can click and <strong>drag the window</strong> to change the viewpoint.
-    </p>
-
-    <div id="wrapper" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 2em;">
-    </div>
+    <div class="pagination" id="pagination"></div>
 
     <script>
       // Hardcoded list of recordings
@@ -84,23 +86,73 @@
         "recording_varanus-cage.viser", "recording_walking.viser"
       ];
 
+      const recordingsPerPage = 6;
+      const totalPages = Math.ceil(recordings.length / recordingsPerPage);
+
+      // Get current page from URL parameters (default to 1)
+      const urlParams = new URLSearchParams(window.location.search);
+      let currentPage = parseInt(urlParams.get('page')) || 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+
       const wrapper = document.getElementById('wrapper');
+      const pagination = document.getElementById('pagination');
 
-      recordings.forEach(file => {
-        const container = document.createElement('div');
-        container.className = 'recording-container';
+      function renderPage(page) {
+        wrapper.innerHTML = ''; // Clear previous content
+        const start = (page - 1) * recordingsPerPage;
+        const end = Math.min(start + recordingsPerPage, recordings.length);
 
-        const iframe = document.createElement('iframe');
-        iframe.src = `https://junyi-test.github.io/build/?playbackPath=https://junyi-test.github.io/recordings/${file}&initDistanceScale=1`;
-        container.appendChild(iframe);
+        // Render recordings for the current page
+        for (let i = start; i < end; i++) {
+          const file = recordings[i];
+          const container = document.createElement('div');
+          container.className = 'recording-container';
 
-        const name = document.createElement('div');
-        name.className = 'recording-name';
-        name.textContent = file.replace('.viser', '').replace('recording_', '').replace(/-/g, ' ');
-        container.appendChild(name);
+          const iframe = document.createElement('iframe');
+          iframe.src = `https://junyi-test.github.io/build/?playbackPath=https://junyi-test.github.io/recordings/${file}&initDistanceScale=1`;
+          container.appendChild(iframe);
 
-        wrapper.appendChild(container);
-      });
+          const name = document.createElement('div');
+          name.className = 'recording-name';
+          name.textContent = file.replace('.viser', '').replace('recording_', '').replace(/-/g, ' ');
+          container.appendChild(name);
+
+          wrapper.appendChild(container);
+        }
+
+        // Render pagination
+        pagination.innerHTML = '';
+
+        if (page > 1) {
+          const prevLink = document.createElement('a');
+          prevLink.href = `?page=${page - 1}`;
+          prevLink.textContent = 'Previous';
+          pagination.appendChild(prevLink);
+        }
+
+        for (let p = 1; p <= totalPages; p++) {
+          if (p === page) {
+            const currentPageLabel = document.createElement('strong');
+            currentPageLabel.textContent = p;
+            pagination.appendChild(currentPageLabel);
+          } else {
+            const pageLink = document.createElement('a');
+            pageLink.href = `?page=${p}`;
+            pageLink.textContent = p;
+            pagination.appendChild(pageLink);
+          }
+        }
+
+        if (page < totalPages) {
+          const nextLink = document.createElement('a');
+          nextLink.href = `?page=${page + 1}`;
+          nextLink.textContent = 'Next';
+          pagination.appendChild(nextLink);
+        }
+      }
+
+      // Initialize the page
+      renderPage(currentPage);
     </script>
   </body>
 </html>
