@@ -1,9 +1,12 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>Results (Page 3)</title>
+    <title> Results (anonymized)</title>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, minimum-scale=1"
+    />
     <style>
       body {
         padding: 2em;
@@ -22,137 +25,55 @@
           height: 30em;
         }
       }
-      .recording-container {
-        text-align: center;
-        margin-bottom: 2em;
-      }
-      .recording-name {
-        margin-top: 0.5em;
-        font-size: 1.1em;
-        color: #333;
-      }
-      .pagination {
-        text-align: center;
-        margin-top: 2em;
-      }
-      .pagination a {
-        margin: 0 0.5em;
-        text-decoration: none;
-        color: #333;
-      }
-      .pagination strong {
-        margin: 0 0.5em;
-        color: #000;
+      a,
+      a:link {
+        color: #777;
       }
     </style>
+    <title>Anonymous RSRD Results</title>
   </head>
   <body>
-    <div id="wrapper" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 2em;"></div>
-
-    <div class="pagination" id="pagination"></div>
-
-    <script>
-      // Hardcoded list of recordings
-      const recordings = [
-        "recording_bear.viser", "recording_bike-packing.viser", "recording_blackswan.viser", 
-        "recording_bmx-bumps.viser", "recording_bmx-trees.viser", "recording_boat.viser", 
-        "recording_boxing-fisheye.viser", "recording_breakdance-flare.viser", "recording_breakdance.viser", 
-        "recording_bus.viser", "recording_camel.viser", "recording_car-roundabout.viser", 
-        "recording_car-shadow.viser", "recording_car-turn.viser", "recording_cat-girl.viser", 
-        "recording_classic-car.viser", "recording_color-run.viser", "recording_cows.viser", 
-        "recording_crossing.viser", "recording_dance-jump.viser", "recording_dance-twirl.viser", 
-        "recording_dancing.viser", "recording_disc-jockey.viser", "recording_dog-agility.viser", 
-        "recording_dog-gooses.viser", "recording_dog.viser", "recording_dogs-jump.viser", 
-        "recording_dogs-scale.viser", "recording_drift-chicane.viser", "recording_drift-straight.viser", 
-        "recording_drift-turn.viser", "recording_drone.viser", "recording_elephant.viser", 
-        "recording_flamingo.viser", "recording_goat.viser", "recording_gold-fish.viser", 
-        "recording_hike.viser", "recording_hockey.viser", "recording_horsejump-high.viser", 
-        "recording_horsejump-low.viser", "recording_india.viser", "recording_judo.viser", 
-        "recording_kid-football.viser", "recording_kite-surf.viser", "recording_kite-walk.viser", 
-        "recording_koala.viser", "recording_lab-coat.viser", "recording_lady-running.viser", 
-        "recording_libby.viser", "recording_lindy-hop.viser", "recording_loading.viser", 
-        "recording_longboard.viser", "recording_lucia.viser", "recording_mallard-fly.viser", 
-        "recording_mallard-water.viser", "recording_mbike-trick.viser", "recording_miami-surf.viser", 
-        "recording_motocross-bumps.viser", "recording_motocross-jump.viser", "recording_motorbike.viser", 
-        "recording_night-race.viser", "recording_paragliding-launch.viser", "recording_paragliding.viser", 
-        "recording_parkour.viser", "recording_pigs.viser", "recording_planes-water.viser", 
-        "recording_rallye.viser", "recording_rhino.viser", "recording_rollerblade.viser", 
-        "recording_schoolgirls.viser", "recording_scooter-black.viser", "recording_scooter-board.viser", 
-        "recording_scooter-gray.viser", "recording_sheep.viser", "recording_shooting.viser", 
-        "recording_skate-park.viser", "recording_snowboard.viser", "recording_soapbox.viser", 
-        "recording_soccerball.viser", "recording_stunt.viser", "recording_surf.viser", 
-        "recording_swing.viser", "recording_tennis.viser", "recording_tractor-sand.viser", 
-        "recording_train.viser", "recording_tuk-tuk.viser", "recording_upside-down.viser", 
-        "recording_varanus-cage.viser", "recording_walking.viser"
-      ];
-
-      const recordingsPerPage = 6;
-      const totalPages = Math.ceil(recordings.length / recordingsPerPage);
-
-      // Get current page from URL parameters (default to 1)
-      const urlParams = new URLSearchParams(window.location.search);
-      let currentPage = parseInt(urlParams.get('page')) || 1;
-      if (currentPage > totalPages) currentPage = totalPages;
-
-      const wrapper = document.getElementById('wrapper');
-      const pagination = document.getElementById('pagination');
-
-      function renderPage(page) {
-        wrapper.innerHTML = ''; // Clear previous content
-        const start = (page - 1) * recordingsPerPage;
-        const end = Math.min(start + recordingsPerPage, recordings.length);
-
-        // Render recordings for the current page
-        for (let i = start; i < end; i++) {
-          const file = recordings[i];
-          const container = document.createElement('div');
-          container.className = 'recording-container';
-
-          const iframe = document.createElement('iframe');
-          iframe.src = `https://junyi-test.github.io/build/?playbackPath=https://junyi-test.github.io/recordings/${file}&initDistanceScale=1`;
-          container.appendChild(iframe);
-
-          const name = document.createElement('div');
-          name.className = 'recording-name';
-          name.textContent = file.replace('.viser', '').replace('recording_', '').replace(/-/g, ' ');
-          container.appendChild(name);
-
-          wrapper.appendChild(container);
-        }
-
-        // Render pagination
-        pagination.innerHTML = '';
-
-        if (page > 1) {
-          const prevLink = document.createElement('a');
-          prevLink.href = `?page=${page - 1}`;
-          prevLink.textContent = 'Previous';
-          pagination.appendChild(prevLink);
-        }
-
-        for (let p = 1; p <= totalPages; p++) {
-          if (p === page) {
-            const currentPageLabel = document.createElement('strong');
-            currentPageLabel.textContent = p;
-            pagination.appendChild(currentPageLabel);
-          } else {
-            const pageLink = document.createElement('a');
-            pageLink.href = `?page=${p}`;
-            pageLink.textContent = p;
-            pagination.appendChild(pageLink);
-          }
-        }
-
-        if (page < totalPages) {
-          const nextLink = document.createElement('a');
-          nextLink.href = `?page=${page + 1}`;
-          nextLink.textContent = 'Next';
-          pagination.appendChild(nextLink);
-        }
-      }
-
-      // Initialize the page
-      renderPage(currentPage);
-    </script>
+    <div style="text-align: center; padding: 1em">
+      <a href="/">Page 1</a>
+      <!-- <strong>Page 1</strong> -->
+      &nbsp;&bull;&nbsp;
+      <!-- <a href="page2.html">Page 2</a> -->
+      <strong>Page 2</strong>
+      &nbsp;&bull;&nbsp;
+      <a href="page3.html">Page 3</a>
+    </div>
+    <!-- add info saying that you can click and drag the window to change viewpoint -->
+    <p style="text-align: center; padding: 1em">
+      You can click and <strong>drag the window</strong> to change the viewpoint.
+    </p>
+    <div
+      id="wrapper"
+      style="
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 2em;
+      "
+    >
+    <iframe
+    src="https://junyi-test.github.io/build/?playbackPath=https://junyi-test.github.io/recordings/recording_breakdance.viser&initDistanceScale=1"
+  ></iframe>
+    <iframe
+      src="https://junyi-test.github.io/build/?playbackPath=https://junyi-test.github.io/recordings/recording_judo.viser&initDistanceScale=1"
+    ></iframe>
+    <iframe
+      src="https://junyi-test.github.io/build/?playbackPath=https://junyi-test.github.io/recordings/recording_parkour.viser&initDistanceScale=1"
+    ></iframe>
+    <iframe
+    src="https://junyi-test.github.io/build/?playbackPath=https://junyi-test.github.io/recordings/recording_camel.viser&initDistanceScale=1"
+  ></iframe>
+    <iframe
+      src="https://junyi-test.github.io/build/?playbackPath=https://junyi-test.github.io/recordings/recording_soapbox.viser&initDistanceScale=1"
+    ></iframe>
+    <iframe
+      src="https://junyi-test.github.io/build/?playbackPath=https://junyi-test.github.io/recordings/recording_tennis.viser&initDistanceScale=1"
+    ></iframe>
+    </div>
   </body>
 </html>
